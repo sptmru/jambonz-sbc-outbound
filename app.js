@@ -1,3 +1,12 @@
+const http = require('http');
+const https = require('https');
+const CacheableLookup = require('cacheable-lookup');
+
+const cacheable = new CacheableLookup();
+
+cacheable.install(http.globalAgent);
+cacheable.install(https.globalAgent);
+
 const assert = require('assert');
 assert.ok(process.env.JAMBONES_MYSQL_HOST &&
   process.env.JAMBONES_MYSQL_USER &&
