@@ -1,13 +1,5 @@
 (async() => {
-  const http = require('http');
-  const https = require('https');
   const dns = require('dns').promises;
-  const CacheableLookup = require('cacheable-lookup');
-
-  const cacheable = new CacheableLookup();
-
-  cacheable.install(http.globalAgent);
-  cacheable.install(https.globalAgent);
 
   const opts = Object.assign({
     timestamp: () => {return `, "time": "${new Date().toISOString()}"`;}
