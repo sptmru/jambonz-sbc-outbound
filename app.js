@@ -6,19 +6,20 @@
   }, {level: process.env.JAMBONES_LOGLEVEL || 'info'});
   const logger = require('pino')(opts);
 
-  async function getResolvedHost(mysqlHost) {
+  async function getResolvedHost(host) {
     try {
-      const result = await dns.lookup(mysqlHost);
-      logger.info(`Resolved ${mysqlHost} to ${result.address}`);
+      const result = await dns.lookup(host);
+      logger.info(`Resolved ${host} to ${result.address}`);
       return result.address;  // Return the resolved IP address
     } catch (err) {
-      logger.error(`Error resolving ${mysqlHost}: ${err.message}`);
-      return mysqlHost;  // Return the original hostname if the lookup fails
+      logger.error(`Error resolving ${host}: ${err.message}`);
+      return host;  // Return the original hostname if the lookup fails
     }
   }
 
   // Use IIFE to resolve the MySQL host before proceeding
   const mysqlHostAddress = await getResolvedHost(process.env.JAMBONES_MYSQL_HOST);
+  const influxDbHostAddress = await getResolvedHost(process.env.JAMBONES_TIME_SERIES_HOST);
 
   const assert = require('assert');
   assert.ok(process.env.JAMBONES_MYSQL_HOST &&
@@ -49,7 +50,7 @@
     writeAlerts,
     AlertType
   } = require('@jambonz/time-series')(logger, {
-    host: process.env.JAMBONES_TIME_SERIES_HOST,
+    host: influxDbHostAddress,
     commitSize: 50,
     commitInterval: 'test' === process.env.NODE_ENV ? 7 : 20
   });
