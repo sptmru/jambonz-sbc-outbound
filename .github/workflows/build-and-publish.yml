@@ -47,9 +47,23 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Build and push app Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/jambonz-sbc-outbound-custom:${{ steps.increment_version.outputs.new_version }}
 
-      - name: Build Jambonz API server Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/jambonz-sbc-outbound-custom:${{ steps.increment_version.outputs.new_version }} -f Dockerfile .
+      - name: Set up QEMU for ARM builds
+        uses: docker/setup-qemu-action@v3
 
-      - name: Push Jambonz API server image to Docker Hub
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/jambonz-sbc-outbound-custom:${{ steps.increment_version.outputs.new_version }}
+      - name: Build and push app Docker image for ARM
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/arm64
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/jambonz-sbc-outbound-custom:${{ steps.increment_version.outputs.new_version }}-arm
