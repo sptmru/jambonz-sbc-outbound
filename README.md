@@ -7,7 +7,7 @@ This application provides a part of the SBC (Session Border Controller) function
 Configuration is provided via environment variables:
 
 | variable | meaning | required?|
-|----------|----------|---------|
+|----------|----------|---------| 
 |DRACHTIO_HOST| ip address of drachtio server (typically '127.0.0.1')|yes|
 |DRACHTIO_PORT| listening port of drachtio server for control connections (typically 9022)|yes|
 |DRACHTIO_SECRET| shared secret|yes|
