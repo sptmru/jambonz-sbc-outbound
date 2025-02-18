@@ -19,7 +19,6 @@
 
   // Use IIFE to resolve the MySQL host before proceeding
   const mysqlHostAddress = await getResolvedHost(process.env.JAMBONES_MYSQL_HOST);
-  const influxDbHostAddress = await getResolvedHost(process.env.JAMBONES_TIME_SERIES_HOST);
 
   const assert = require('assert');
   assert.ok(process.env.JAMBONES_MYSQL_HOST &&
@@ -41,19 +40,6 @@
   const srf = new Srf('sbc-outbound');
   const CIDRMatcher = require('cidr-matcher');
   const {equalsIgnoreOrder, pingMsTeamsGateways, createHealthCheckApp, systemHealth} = require('./lib/utils');
-  const {
-    writeCallCount,
-    writeCallCountSP,
-    writeCallCountApp,
-    writeCdrs,
-    queryCdrs,
-    writeAlerts,
-    AlertType
-  } = require('@jambonz/time-series')(logger, {
-    host: influxDbHostAddress,
-    commitSize: 50,
-    commitInterval: 'test' === process.env.NODE_ENV ? 7 : 20
-  });
   const StatsCollector = require('@jambonz/stats-collector');
   const stats = new StatsCollector(logger);
   const CallSession = require('./lib/call-session');
@@ -95,13 +81,6 @@
 
   srf.locals = {...srf.locals,
     stats,
-    writeCallCount,
-    writeCallCountSP,
-    writeCallCountApp,
-    writeCdrs,
-    writeAlerts,
-    AlertType,
-    queryCdrs,
     activeCallIds,
     idleEmitter,
     privateNetworkCidr: process.env.PRIVATE_VOIP_NETWORK_CIDR || null,
